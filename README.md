@@ -1,1 +1,1 @@
-# initramfs_hello
+# initramfs_cpio_gz
