@@ -18,7 +18,20 @@ def MAIN_ENV(args):
 def MAIN_EXTRACT(args):
     set_global(args)
 
-    ops.copyto(ops.path_join(pkg_path, "."), output_dir)
+    ops.copyto(ops.path_join(pkg_path, "Makefile"), output_dir)
+    ops.copyto(ops.path_join(pkg_path, "Makefile.include.app"), output_dir)
+    ops.copyto(ops.path_join(pkg_path, "init.c"), output_dir)
+
+    return True
+
+def MAIN_PATCH(args, patch_group_name):
+    set_global(args)
+    for patch in iopc.get_patch_list(pkg_path, patch_group_name):
+        if iopc.apply_patch(tarball_dir, patch):
+            continue
+        else:
+            sys.exit(1)
+
     return True
 
 def MAIN_CONFIGURE(args):
@@ -36,8 +49,9 @@ def MAIN_BUILD(args):
 def MAIN_INSTALL(args):
     set_global(args)
 
-    CMD = ["echo", "init", "|", "cpio", "-o", "-H", "newc", "|", "gzip", ">", "initramfs.cpio.gz"]
-    ops.execCmd(CMD, output_dir, False, None)
+    #CMD = ["echo", "init", "|", "cpio", "-o", "-H", "newc", "|", "gzip", ">", "initramfs.cpio.gz"]
+    #ops.execCmd(CMD, output_dir, False, None)
+    iopc.installBin(args["pkg_name"], ops.path_join(output_dir, "init"), "")
 
     return False
 
